@@ -6,8 +6,10 @@
 		"default_icon": {
 			"38": "bookmark_logo.png"
 		},
-		"default_title": "Automark",
-		"default_popup": "popup.html"
+		"default_title": "Automark"
+	},
+	"background": {
+		"scripts": ["handleReq.js"]
 	},
 	"permissions": [
 		"activeTab",
