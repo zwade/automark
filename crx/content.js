@@ -58,7 +58,7 @@ var createSnackbar = (function() {
 		snackbar.style.opacity = 1;
 	};
 })();
-var worker = new Worker(chrome.runtime.getURL('worker.js'));
+var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
 worker.postMessage(document.body.innerText);
 worker.onmessage = function(event) {
 	createSnackbar("Page Saved");
