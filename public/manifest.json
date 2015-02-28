@@ -15,6 +15,9 @@
 		"activeTab",
 		"storage"
 	],
+	"chrome_url_overrides": {
+		"bookmarks":"public/index.html"
+	},
 	"web_accessible_resources": [
 		"crx/worker.js"
 	]
