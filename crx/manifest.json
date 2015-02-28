@@ -3,7 +3,17 @@
 	"name": "Automark",
 	"version": "0.1.0",
 	"browser_action": {
+		"default_icon": {
+			"38": "bookmark_logo.png"
+		},
 		"default_title": "Automark",
 		"default_popup": "popup.html"
-	}
+	},
+	"permissions": [
+		"activeTab",
+		"storage"
+	],
+	"web_accessible_resources": [
+		"worker.js"
+	]
 }
