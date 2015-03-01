@@ -7,6 +7,9 @@ var indexer = (function () {
 	// Private variables and functions
 	var approxRank;
 	var keywords;
+	var keywordvectors;
+	var keywordweight;
+	var areKeywordVectorsUpdated = false;
 	var contentmatrix; //Stores by column
 	var rkapproxuk;
 	var rkapproxsk;
@@ -24,7 +27,120 @@ var indexer = (function () {
 		docvectors = vt;
 	};
 
-	// Query with keywords
+	/*
+		Generates folder structure with a certain number of folders
+		Params:
+			foldernum: Number of folders to use
+		Returns:
+			{ "foldername1": [docid, docid, docid, ...],
+			  "foldername2": [docid, ...],
+			  ...
+			}
+	 */
+	var folderize = function (foldernum) {
+		var out = {};
+		var foldernames = getFolders(foldernum);
+		for (var j = 0; j < foldernames.length; j++) {
+			out[foldernames[j][1]] = [];
+		}
+		for (var i = 0; i < docvectors.length; i++) {
+			var infolder = getClosestFolder(docvectors[i], foldernames);
+			out[infolder].push(docDict[i]);
+		}
+		return out;
+	};
+
+	var getClosestFolder = function (docvector, foldernames) {
+		var closest;
+		for (var i = 0; i < foldernames.length; i++) {
+			var dist = cosim(keywordvectors[foldernames[i][0]], docvector);
+			if (typeof closest == 'undefined') {
+				closest = [foldernames[i][1], dist];
+			}
+			else if (dist > closest[1]) {
+				closest = [foldernames[i][1], dist];
+			}
+		}
+		return closest[0];
+	};
+
+	var getFolders = function (foldernum) {
+		if (!areKeywordVectorsUpdated) {
+			keywordvectors = [];
+			computeKeywordVectors();
+		}
+
+		// Greedy Algorithm
+		var bestset;
+		for (var i = 0; i < keywordvectors.length; i++) {
+			var iset = [];
+			iset.push([i, keywordvectors[i]]);
+			for (var k = 1; k < foldernum; k++) {
+				var maxvalue = 0;
+				var bestindex = -1;
+				for (var j = 0; j < keywordvectors.length; j++) {
+					var tempvalue = calculateValue(iset, keywordvectors[j]);
+					if (tempvalue > maxvalue) {
+						maxvalue = tempvalue;
+						bestindex = j;
+					}
+				}
+				iset.push([bestindex, keywordvectors[bestindex]]);
+			}
+			var isettotal = calculateValue(iset);
+			if (typeof bestset == 'undefined') {
+				bestset = [isettotal, iset];
+			}
+			else if (isettotal > bestset[0]) {
+				bestset = [isettotal, iset];
+			}
+		}
+
+		// Replace index of keywords with the keywords
+		var folders = [];
+		for (var l = 0; l < bestset[1].length; l++) {
+			folders.push([bestset[1][l][0], keywords[bestset[1][l][0]]]);
+		}
+		return folders;
+	};
+
+	var calculateValue = function (iset, newvector) {
+		var tempiset = iset;
+		var value = 0;
+		for (var i = 0; i < tempiset.length; i++) {
+			for (var j = i; j < tempiset.length; j++) {
+				value = value + distanceBetween(tempiset[i][1], tempiset[j][1]);
+			}
+			if (typeof newvector !== 'undefined') {
+				value = value + distanceBetween(tempiset[i][1], newvector);
+			}
+		}
+		return value;
+	};
+
+	var distanceBetween = function (v1, v2) {
+		return mag(numeric.sub(v2, v1));
+	};
+
+	var computeKeywordVectors = function () {
+		var vector = [];
+		for (var k = 0; k < keywords.length; k++) {
+			vector.push(0);
+		}
+		for (var i = 0; i < keywords.length; i++) {
+			vector[i] = keywordweight;
+			keywordvectors.push(numeric.dot(numeric.dot(vector, rkapproxuk), numeric.inv(rkapproxsk)));
+			vector[i] = 0;
+		}
+	};
+
+	/*
+		Queries using keywords
+		Params:
+			querywords: Array of keywords
+			numtoreturn: Specifies how many to return
+		Returns sorted array of [docID, distance] of length numtoreturn
+	 */
 	var query = function (querywords, numtoreturn) {
 		var ovector = getQueryVector(querywords);
 		var tvector = numeric.dot(numeric.dot(ovector, rkapproxuk), numeric.inv(rkapproxsk));
@@ -46,7 +162,7 @@ var indexer = (function () {
 			newVector.push(0);
 		}
 		for (var j = 0; j < querywords.length; j++) {
-			newVector[binaryIndexOf(querywords[j])] = 1;
+			newVector[binaryIndexOf(querywords[j])] = keywordweight;
 		}
 		return newVector;
 	};
@@ -177,18 +293,53 @@ var indexer = (function () {
 		}
 	};
 
+	// Save/load
+	var save = function () {
+		return {
+			"approxRank": approxRank,
+			"keywords": keywords,
+			"keywordvectors": keywordvectors,
+			"keywordweight": keywordweight,
+			"areKeywordVectorsUpdated": areKeywordVectorsUpdated,
+			"contentmatrix": contentmatrix,
+			"rkapproxuk": rkapproxuk,
+			"rkapproxsk": rkapproxsk,
+			"docvectors": docvectors,
+			"docDict": docDict
+		};
+	};
+
+	var load = function (savestate) {
+		approxRank = savestate["approxRank"];
+		keywords = savestate["keywords"];
+		keywordvectors = savestate["keywordvectors"];
+		keywordweight = savestate["keywordweight"];
+		areKeywordVectorsUpdated = savestate["areKeywordVectorsUpdated"];
+		contentmatrix = savestate["contentmatrix"];
+		rkapproxuk = savestate["rkapproxuk"];
+		rkapproxsk = savestate["rkapproxsk"];
+		docvectors = savestate["docvectors"];
+		docDict = savestate["docDict"];
+	};
+
 	// Constructor
 	var indexer = function () {
 		keywords = [];
 		contentmatrix = [];
 		docDict = {};
-		approxRank = 2; // Defaults to 2;
+		approxRank = 2; // Defaults to 2
+		keywordweight = 100; // Defaults to 100
 	};
 
 	// Alter Settings
 	var changeApproxRank = function (rank) {
 		approxRank = rank;
 		lsi();
+	};
+
+	var changeKeywordweight = function (weight) {
+		keywordweight = weight;
+		areKeywordVectorsUpdated = false;
 	};
 
 	// Debugging
@@ -210,7 +361,11 @@ var indexer = (function () {
 		add: addDocument,
 		lsi: lsi,
 		query: query,
+		folderize: folderize,
+		save: save,
+		load: load,
 		changeApproxRank: changeApproxRank,
+		changeKeywordweight: changeKeywordweight,
 		printKeywords: printKeywords,
 		printContentmatrix: printContentmatrix,
 		printDocVectors: printDocVectors
