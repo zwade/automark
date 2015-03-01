@@ -219,7 +219,6 @@
                 var result = "";
                 var title2 = title.toLowerCase();
                 titleArray = title2.split(" ");
-                console.log(titleArray);
                 var keywordsInTitle = [];
                 for (i in taggedWords) {
                     var taggedWord = taggedWords[i];
@@ -283,6 +282,7 @@
                     delete groups[stemsToDelete[i]];
                 var theRealKeyWords = [];
                 var ultimateMaxFreq = 0;
+                var totalFreq = 0;
                 for (stem in groups){
                     if(stem != "nostem"){
                         group = groups[stem];
@@ -317,9 +317,8 @@
                 }
                 theRealKeyWords = uniq(theRealKeyWords);
                 theRealKeyWords.sort();
+                console.log(ultimateMaxFreq);
                 var keywordsFinal = [];
-                console.log(theRealKeyWords);
-                console.log(keywordsInTitle);
                 for (i in keywordsInTitle){
                     titleWord = keywordsInTitle[i];
                     if(theRealKeyWords.indexOf(titleWord)==-1){
@@ -327,15 +326,22 @@
                         freq[titleWord] = 1;
                     }
                     else{
-                        freq[titleWord] += 0.2*ultimateMaxFreq;
+                        freq[titleWord] += 0.1*ultimateMaxFreq;
                     }                        
                 }
+                for (i in theRealKeyWords){
+                    totalFreq += freq[theRealKeyWords[i]];
+                }
                 result += ("Number of KeyWords: " + theRealKeyWords.length + "<br/><br/>");
+                var theTotalPercent = 0;
                 for (word in theRealKeyWords){
-                    var ans = theRealKeyWords[word] + ":" + freq[theRealKeyWords[word]];
+                    var percent = Math.round(10000*freq[theRealKeyWords[word]]/totalFreq)/100;
+                    theTotalPercent += percent;
+                    var ans = theRealKeyWords[word] + ":" + percent;
                     keywordsFinal.push(ans);
                     result += (ans + "<br/>");
                 }
+                result += ("Total Percent: " + theTotalPercent + "<br/><br/>");
                 document.getElementById("tagged_text").innerHTML = result;
                 return keywordsFinal;
             }
