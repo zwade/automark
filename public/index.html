@@ -3,20 +3,134 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+	<link type="text/css" rel="stylesheet" href="css/styles.css"/>
 	<title>Bookmarks</title>
 </head>
 <body>
-<nav>
-	<ul id="nav-mobile" class="side-nav fixed">
-		<li><a id="logo-container" href="index.html" class="brand-logo">
-			<object id="front-page-logo" type="image/svg+xml" data="res/materialize.svg">Your browser does not support SVG</object>
-		</a></li>
-		<li><a href="#settings" class="waves-effect">Settings</a></li>
+<header>
+	<nav class="top-nav">
+		<div class="nav-wrapper">
+			<a class="page-title">Bookmarks</a>
+		</div>
+		<ul class="tabs">
+			<li class="tab col s3"><a class="active" href="#test1">Test 1</a></li>
+			<li class="tab col s3"><a href="#test2">Test 2</a></li>
+			<li class="tab col s3"><a href="#test3">Test 3</a></li>
+			<li class="tab col s3"><a href="#test4">Test 4</a></li>
+		</ul>
+		<ul id="nav-mobile" class="side-nav fixed">
+			<li class="logo">
+				<a href="index.html" id="logo-container" class="brand-logo">
+					<img id="main-logo" src="images/logo_512px.png"/>
+				</a></li>
+			<li><a class="waves-effect">All Bookmarks</a></li>
+			<li><a class="waves-effect" id="settings">Settings</a></li>
+		</ul>
+		<a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+	</nav>
+</header>
+<main>
+	<div class="row">
+		<div class="col s12 m6 l4" id="col1">
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+		</div>
+		<div class="col s12 m6 l4" id="col2">
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+		</div>
+		<div class="col s12 m6 l4" id="col3">
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+			<div class="card small">
+				<div class="card-image fill-card">
+					<img src="images/logo_512px.png"/>
+					<span class="card-title">Card Title</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<div class="fixed-action-btn" style="bottom: 24px; right: 24px;">
+	<a class="btn-floating btn-large waves-effect waves-light red">
+		<i class="large mdi-editor-mode-edit"></i>
+	</a>
+	<ul>
+		<li><a class="btn-floating waves-effect waves-light red"><i class="large mdi-editor-insert-chart"></i></a></li>
+		<li><a class="btn-floating waves-effect waves-light yellow darken-1"><i class="large mdi-editor-format-quote"></i></a></li>
+		<li><a class="btn-floating waves-effect waves-light green"><i class="large mdi-editor-publish"></i></a></li>
+		<li><a class="btn-floating waves-effect waves-light blue"><i class="large mdi-editor-attach-file"></i></a></li>
 	</ul>
-	<a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
-</nav>
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-<script type="text/javascript" src="js/bin/materialize.min.js"></script>
+</div>
+<!-- Modal Settings -->
+<div id="modal-settings" class="modal">
+	<div class="modal-content">
+		<h4>Settings</h4>
+		<p>A bunch of text</p>
+	</div>
+	<div class="modal-footer">
+		<a class="waves-effect btn-flat modal-action modal-close">Save</a>
+		<a class="waves-effect btn-flat modal-action modal-close">Cancel</a>
+	</div>
+</div>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bin/materialize.js"></script>
+<script type="text/javascript" src="js/setup-scroll.js"></script>
 <script type="text/javascript" src="js/setup-material.js"></script>
+<script type="text/javascript" src="js/scripts.js"></script>
 </body>
 </html>

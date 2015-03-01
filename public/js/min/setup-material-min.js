@@ -1,1 +1,1 @@
-$(".button-collapse").sideNav();
+$(".button-collapse").sideNav(),$("div a.btn-floating").click(function(){toast("hey!",1e3)}),$("div.card.small").click(function(){toast("yo",400)}),$("#settings").click(function(){$("#modal-settings").openModal()}),$(".card").scrollfire({onBottomIn:function(o){$(o).addClass("active")}}).scrollfire({onBottomHidden:function(o){$(o).removeClass("active")}});

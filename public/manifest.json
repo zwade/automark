@@ -1,0 +1,32 @@
+{
+	"manifest_version": 2,
+	"name": "Automark",
+	"version": "0.1.0",
+	"icons": {
+		"128":"crx/logo_128px.png"
+	},
+	"browser_action": {
+		"default_icon": {
+			"38": "crx/logo_64px.png"
+		},
+		"default_title": "Automark"
+	},
+	"background": {
+		"scripts": ["crx/handleReq.js"]
+	},
+	"permissions": [
+		"activeTab",
+		"tabs",
+		"bookmarks",
+		"http://*/*",
+		"https://*/*",
+		"<all_urls>",
+		"storage"
+	],
+	"chrome_url_overrides": {
+		"bookmarks":"index.html"
+	},
+	"web_accessible_resources": [
+		"crx/worker.js"
+	]
+}
