@@ -91,13 +91,49 @@
 	<div class="modal-content">
 		<h4>Settings</h4>
 		<form action="#">
-			<p class="range-field">
-				<input type="range" id="filter-strength" min="1" max="5" />
-			</p>
+			<div class="row">
+				<div class="col s4">
+					Category Detection
+				</div>
+				<div class="col s8">
+					<div class="switch">
+						<label style="float: right">
+							Manual
+							<input type="checkbox" checked="checked" id="automatic-quantity">
+							<span class="lever"></span>
+							Automatic
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s12 m4" style="line-height: 50px;">
+					Max Number of Categories
+				</div>
+				<div class="col s12 m8">
+					<p class="range-field">
+						<input type="range" id="folder-quantity" min="1" max="5" disabled/>
+					</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col s4">
+					Detection Algorithm
+				</div>
+				<div class="col s8">
+					<select style="float: right" id="sorting-algorithm">
+						<option value="0" selected>Automatic</option>
+						<option value="1">Simple</option>
+						<option value="2">Weighted</option>
+						<option value="3">Frequency</option>
+						<option value="4">Threshold</option>
+					</select>
+				</div>
+			</div>
 		</form>
 	</div>
 	<div class="modal-footer">
-		<a class="waves-effect btn-flat modal-action modal-close">Save</a>
+		<a class="waves-effect btn-flat modal-action modal-close" id="save-settings">Save</a>
 		<a class="waves-effect btn-flat modal-action modal-close">Cancel</a>
 	</div>
 </div>
