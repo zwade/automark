@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/automark.iml" filepath="$PROJECT_DIR$/.idea/automark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Automark.iml" filepath="$PROJECT_DIR$/.idea/Automark.iml" />
     </modules>
   </component>
 </project>
+

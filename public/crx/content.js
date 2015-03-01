@@ -1,4 +1,5 @@
 var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
+var type = "s" //allows for other types
 worker.postMessage(document.body.innerText);
 worker.onmessage = function(event) {
 	console.log(event.data);
@@ -14,7 +15,7 @@ worker.onmessage = function(event) {
 			console.log(chrome.storage.sync.set({"pages": pages}));
 			chrome.runtime.sendMessage({greeting:"takePic"});
 			var a = {}
-			a[loc] = JSON.parse(event.data)
+			a[loc] = [JSON.parse(event.data),document.title,type]
 			console.log(chrome.storage.sync.set(a));
 			createSnackbar("Page Saved","View Bookmarks", function() {
 				chrome.runtime.sendMessage({greeting: "bookmarks"})
