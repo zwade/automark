@@ -6,7 +6,7 @@ var addCard = function(title, image, link) {
 	if (image === undefined) {
 		img = '<div class="bookmark-icon"><i class="mdi-action-bookmark-outline"></i></div>'
 	}
-	columns[numCards % 3].append('<a href=\'' + link + '\'><div class=\'card small\'>' +
+	columns[numCards % 3].append('<a href=\'' + link + '\' target=\'_blank\'><div class=\'card small\'>' +
 	'<div class=\'card-image fill-card\'>' +
 	img +
 	'<span class=\'card-title\'>' + title + '</span>' +
@@ -41,6 +41,11 @@ var addCategory = function(title) {
 	categories.children().last().click(function() {
 		toast($(this).text());
 	})
+};
+var removeCards = function() {
+	columns.forEach(function (column) {
+		column.empty();
+	});
 };
 $('#save-bookmark').click(function() {
 	var input = $('#new-url');
