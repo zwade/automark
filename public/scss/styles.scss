@@ -61,9 +61,11 @@ div.nav-wrapper {
 	font-size: 200px;
 }
 #search {
+	height: 132px;
 	float: right;
 	line-height: 132px;
 	margin-right: 3rem;
+	overflow: hidden;
 	&.active {
 		.input {
 			width: 300px;

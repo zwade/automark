@@ -7960,9 +7960,11 @@ div.nav-wrapper {
   font-size: 200px; }
 
 #search {
+  height: 132px;
   float: right;
   line-height: 132px;
-  margin-right: 3rem; }
+  margin-right: 3rem;
+  overflow: hidden; }
   #search.active .input {
     width: 300px;
     transition: width 0.5s cubic-bezier(0.55, 0, 0.1, 1); }

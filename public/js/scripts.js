@@ -5,6 +5,8 @@ var columns = [$('#col1'), $('#col2'), $('#col3')],
 	saveModal = $('#save-bookmark'),
 	saveModalContainer = $('#modal-add'),
 	saveModalProgress = saveModalContainer.find('.progress'),
+	tabs = $('.tabs'),
+	datePicker = $('.datepicker'),
 	urlRegEx = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-]*)?\??(?:[\-\+=&;%@\.\w]*)#?(?:[\.!\/\\\w]*))?)/g;
 
 var addCard = function(title, image, link) {
@@ -85,3 +87,14 @@ $('#add-form').submit(function() {
 	saveModal.click();
 	event.preventDefault();
 });
+datePicker.pickadate({
+	selectMonths: true, // Creates a dropdown to control month
+	selectYears: 15 // Creates a dropdown of 15 years to control year
+});
+tabs.children().eq(1).click(function() {
+	if (tabs.children().eq(1).find('a').hasClass('active')) {
+		datePicker.click();
+		return false;
+	}
+});
+//datePicker[0].oninput = sortyByDate(datePicker.val());
