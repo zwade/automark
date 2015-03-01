@@ -131,7 +131,10 @@ var indexer = (function () {
 
 	var folderizeOnTopFreqFolders = function (threshold, foldernum) {
 		var out = {};
-
+		if (!areKeywordVectorsUpdated) {
+			keywordvectors = [];
+			computeKeywordVectors();
+		}
 		var folders = getUnrelatedTopFreqFolders(threshold, foldernum);
 		for (var j = 0; j < folders.length; j++) {
 			out[folders[j][1]] = [];
