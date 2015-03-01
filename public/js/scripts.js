@@ -37,10 +37,10 @@ var addCards = function(lst) {
 	});
 };
 var addCategory = function(title) {
-	categories.append('<li><a href=\'#\'>' + title + '</a></li>');
-	categories.children().last().click(function() {
+	categories.append('<li><a class=\'category\' type=\''+title+'\' href=\'#'+title+'\'>' + title + '</a></li>');
+	/*categories.children().last().click(function() {
 		toast($(this).text());
-	})
+	})*/
 };
 var removeCards = function() {
 	columns.forEach(function (column) {

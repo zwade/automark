@@ -22,7 +22,22 @@ $(window).load(function() {
 				cards[page[1]] = [urls[p.pages[k]],"http://"+p.pages[k]]
 				
 			}
+			i.changeApproxRank(Math.floor(p.pages.length/2))
 			i.lsi();
+			cats = i.folderize(5);
+			for (var n in cats) {
+				addCategory(n);
+			}
+			$(".category").click(function() {
+				//$(".category").css("background-color","#fff");
+				//$(this).css("background-color","#ddd");
+				removeCards();
+				var tab = $(this).attr("type");
+				for (var name in cats[tab]) {
+					var title = cats[tab][name]
+					addCard(title,cards[title][0],cards[title][1]) 
+				}
+			})
 			$("#search-term").keypress(function(e) {
 				if (e.keyCode == 32 || e.keyCode == 13) {
 					var c = i.query($("#search-term").val().split(" "));
