@@ -329,7 +329,11 @@ function getKeyWords(text, title, thresholdFactor){
                 for (word in theRealKeyWords){
                     var percent = Math.round(10000*freq[theRealKeyWords[word]]/totalFreq)/100;
                     theTotalPercent += percent;
-                    var ans = theRealKeyWords[word].match(/\w+/)[0] + ":" + percent;
+		    var m = theRealKeyWords[word].match(/\w+/);
+		    if (!m) {
+			continue;
+		    }
+                    var ans = m[0] + ":" + percent;
                     keywordsFinal.push(ans);
                 }
                 return keywordsFinal;

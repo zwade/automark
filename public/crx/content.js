@@ -15,8 +15,12 @@ worker.onmessage = function(event) {
 			console.log(chrome.storage.sync.set({"pages": pages}));
 			chrome.runtime.sendMessage({greeting:"takePic"});
 			var a = {}
-			a[loc] = [JSON.parse(event.data),document.title,type]
-			console.log(chrome.storage.sync.set(a));
+			var arr = JSON.parse(event.data)
+			var dom = location.origin.split("://")[1].split(".");
+			arr.push(dom[dom.length-2]+":30.0");
+			a[loc] = [arr,document.title,type]
+			console.log(a)
+			chrome.storage.sync.set(a);
 			createSnackbar("Page Saved","View Bookmarks", function() {
 				chrome.runtime.sendMessage({greeting: "bookmarks"})
 			});
