@@ -20,6 +20,7 @@
 		"bookmarks",
 		"http://*/*",
 		"https://*/*",
+		"<all_urls>",
 		"storage"
 	],
 	"chrome_url_overrides": {

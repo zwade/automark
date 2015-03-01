@@ -12,6 +12,7 @@ worker.onmessage = function(event) {
 		if (pages.indexOf(loc) < 0) {
 			pages.push(loc)
 			console.log(chrome.storage.sync.set({"pages": pages}));
+			chrome.runtime.sendMessage({greeting:"takePic"});
 			var a = {}
 			a[loc] = JSON.parse(event.data)
 			console.log(chrome.storage.sync.set(a));
