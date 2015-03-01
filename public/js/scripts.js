@@ -7,7 +7,11 @@ var columns = [$('#col1'), $('#col2'), $('#col3')],
 	saveModalProgress = saveModalContainer.find('.progress'),
 	tabs = $('.tabs'),
 	datePicker = $('.datepicker'),
-	urlRegEx = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-]*)?\??(?:[\-\+=&;%@\.\w]*)#?(?:[\.!\/\\\w]*))?)/g;
+	urlRegEx = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-]*)?\??(?:[\-\+=&;%@\.\w]*)#?(?:[\.!\/\\\w]*))?)/g,
+
+	settingAutomatic = $('#automatic-quantity'),
+	settingAlgorithm = $('#sorting-algorithm'),
+	settingNumber = $('#folder-quantity');
 
 var addCard = function(title, image, link) {
 	var img = '<img src=\'' + image + '\'/>';
@@ -119,12 +123,12 @@ worker.onmessage = function(event) {
 		}
 
 		xhr.send()
-		addCard('TEST!!!', undefined, input);
+		addCard(input, undefined, input);
 		bookmarkURL.val('');
 		$('#modal-add').closeModal();
 	}
 });
-$('div a.btn-floating').click(function() {
+$('.fixed-action-btn').find('a.btn-floating').click(function() {
 	saveModalContainer.openModal();
 	saveModalProgress.removeClass('active');
 	saveModal.addClass('disabled');
@@ -142,5 +146,20 @@ tabs.children().eq(1).click(function() {
 		datePicker.click();
 		return false;
 	}
+});
+$(document).delegate('#save-settings', 'click', function() {
+	console.log(settingNumber.val());
+});
+settingAutomatic.change(function() {
+	if(settingAutomatic.is(":checked")) {
+		settingNumber.prop('disabled', true);
+		settingAlgorithm.prop('disabled', true);
+	} else {
+		settingNumber.prop('disabled', false);
+		settingAlgorithm.prop('disabled', false);
+	}
+});
+$(document).ready(function() {
+	settingAlgorithm.material_select();
 });
 //datePicker[0].oninput = sortyByDate(datePicker.val());
