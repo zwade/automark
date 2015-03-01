@@ -37,6 +37,29 @@ $(window).load(function() {
 					addCard(title,cards[title][0],cards[title][1]) 
 				}
 			})
+			
+			domains = {}
+			for (var c in cards) {
+				var domain = cards[c][1].match(/:\/\/([a-zA-Z1-9-_.]+)\//)
+				if (domain && domain[1]) {
+					if (!domains[domain[1]]) {
+						domains[domain[1]] = []
+						addCategory(domain[1],"domain");
+						console.log(domain[1]);
+					}
+					domains[domain[1]].push(c)
+				}
+			}
+			$(".domain").click(function() {
+				removeCards();
+				var tab = $(this).attr("type");
+				for (var name in domains[tab]) {
+					var title = domains[tab][name]
+					addCard(title, cards[title][0], cards[title][1])
+				}
+			})
+
+
 			var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
 			for (var name in cards) {
 				var tmp = cards[name]
@@ -75,7 +98,7 @@ $(window).load(function() {
 				var type = $(this).attr("type");
 				$(".list-acc").hide()
 				$("#"+type+"-list").show()
-				if (type == "categories") {
+				if (type == "categories" || type == "domain") {
 					removeCards();
 					for (var t in cards) {
 						addCard(t,cards[t][0],cards[t][1]);
@@ -114,6 +137,7 @@ $(window).load(function() {
 					addCard(t,cards[t][0],cards[t][1]);
 				}
 			})
+			$($(".sort")[0]).click()
 		})
 	})
 

@@ -217,7 +217,7 @@ function getKeyWords(text, title, thresholdFactor){
                     var taggedWord = taggedWords[i];
                     var word = taggedWord[0].toLowerCase();
                     var tag = taggedWord[1];
-                    if(tag.substring(0,2) == "NN" && tag.indexOf("S")==-1){
+                    if((tag.substring(0,2) == "NN" || (tag.substring(0,2) == "JJ" && titleArray.indexOf(tag) >= 0)) && tag.indexOf("S")==-1 ){
                         if(freq[word]===undefined)
                             freq[word]=1;
                         else
