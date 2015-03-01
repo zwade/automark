@@ -4,6 +4,9 @@ $swift-out: cubic-bezier(.55,0,.1,1);
 	width: 100%;
 	background-color: $primary-color;
 }
+#nav-mobile {
+	overflow: scroll;
+}
 ul li.logo {
 	margin-top: 16px;
 	margin-bottom: 180px;

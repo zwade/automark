@@ -42,13 +42,14 @@ var addCards = function(lst) {
 		addCard(website[0], website[1], website[2]);
 	});
 };
-var addCategory = function(title) {
-	categories.append('<li><a class=\'category\' type=\''+title+'\' href=\'#'+title+'\'>' + title + '</a></li>');
-	categories.children().last().click(function() {
+var addCategory = function(title,pop) {
+	$("#"+pop).append('<li><a class=\''+pop+'\' type=\''+title+'\' href=\'#'+title+'\'>' + title + '</a></li>');
+	/*categories.children().last().click(function() {
 		toast($(this).text());
-	});
+	});*/
 };
 var removeCards = function() {
+	numCards = 0;
 	columns.forEach(function (column) {
 		column.empty();
 	});

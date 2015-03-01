@@ -18,7 +18,8 @@ worker.onmessage = function(event) {
 			var arr = JSON.parse(event.data)
 			var dom = location.origin.split("://")[1].split(".");
 			arr.push(dom[dom.length-2]+":30.0");
-			a[loc] = [arr,document.title,type]
+			var d = new Date();
+			a[loc] = [arr,document.title,type,(d.getMonth()+1)+"/"+(d.getDay()+1)+"/"+(d.getYear()-100)]
 			console.log(a)
 			chrome.storage.sync.set(a);
 			createSnackbar("Page Saved","View Bookmarks", function() {

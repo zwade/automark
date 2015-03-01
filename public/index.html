@@ -21,9 +21,9 @@
 			</div>
 		</div>
 		<ul class="tabs">
-			<li class="tab col s3"><a class="active" href="#">Name</a></li>
-			<li class="tab col s3"><a href="#">Date</a></li>
-			<li class="tab col s3"><a href="#">Category</a></li>
+			<li class="tab col s3"><a class="sort active" type="name" href="#">Name</a></li>
+			<li class="tab col s3"><a class="sort" type="date" href="#">Date</a></li>
+			<li class="tab col s3"><a class="sort" type="categories" href="#">Category</a></li>
 			<li class="tab col s3"><a href="#">Type</a></li>
 		</ul>
 		<ul id="nav-mobile" class="side-nav fixed">
@@ -31,7 +31,18 @@
 				<a href="index.html" id="logo-container" class="brand-logo">
 					<img id="main-logo" src="images/logo_512px.png"/>
 				</a></li>
-			<li class="no-padding">
+			<li id="date-list" class="no-padding list-acc">
+				<ul class="collapsible collapsible-accordion">
+					<li>
+						<a class="collapsible-header"><b>Dates</b></a>
+						<div class="collapsible-body">
+							<ul id="dates">
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</li>
+			<li id="categories-list" class="no-padding list-acc">
 				<ul class="collapsible collapsible-accordion">
 					<li>
 						<a class="collapsible-header"><b>Categories</b></a>
