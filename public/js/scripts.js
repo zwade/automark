@@ -154,7 +154,7 @@ settingAutomatic.change(function() {
 	if(settingAutomatic.is(":checked")) {
 		settingNumber.prop('disabled', true);
 		settingAlgorithm.prop('disabled', true);
-		// disable limit
+		localStorage.removeItem('num');
 	} else {
 		settingNumber.prop('disabled', false);
 		settingAlgorithm.prop('disabled', false);
@@ -164,6 +164,6 @@ $(document).ready(function() {
 	settingAlgorithm.material_select();
 });
 settingNumber.change(function() {
-	localStorage.setItem("num",settingNumber.val())
+	localStorage.setItem("num", settingNumber.val())
 });
 //datePicker[0].oninput = sortyByDate(datePicker.val());
