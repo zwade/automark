@@ -1,4 +1,4 @@
-/**
+ /**
  * Created by Lucas on 2/28/15.
  */
 
@@ -9,6 +9,9 @@ var indexer = (function () {
 	var keywords;
 	var keywordvectors;
 	var keywordweight;
+	var keywordfreqs;
+	var keywordtopfreq;
+	var keywordtopfreqnum;
 	var areKeywordVectorsUpdated = false;
 	var contentmatrix; //Stores by column
 	var rkapproxuk;
@@ -69,12 +72,14 @@ var indexer = (function () {
 			keywordvectors = [];
 			computeKeywordVectors();
 		}
+		updateTopFreqKeywords();
 
 		// Greedy Algorithm
 		var bestset;
-		for (var i = 0; i < keywordvectors.length; i++) {
+		for (var i = 0; i < keywordtopfreq.length; i++) {
 			var iset = [];
-			iset.push([i, keywordvectors[i]]);
+			var bindex = binaryIndexOf(keywordtopfreq[0]);
+			iset.push([bindex, keywordvectors[bindex]]);
 			for (var k = 1; k < foldernum; k++) {
 				var maxvalue = 0;
 				var bestindex = -1;
@@ -88,6 +93,7 @@ var indexer = (function () {
 				iset.push([bestindex, keywordvectors[bestindex]]);
 			}
 			var isettotal = calculateValue(iset);
+			isettotal += 10*foldernum*containsTopFreqs(iset);
 			if (typeof bestset == 'undefined') {
 				bestset = [isettotal, iset];
 			}
@@ -103,6 +109,74 @@ var indexer = (function () {
 		}
 		return folders;
 	};
+
+	var containsTopFreqs = function (iset) {
+		var count = 0;
+		for (var i = 0; i < iset.length; i++) {
+			for (var j = 0; j < keywordtopfreq[j]; j++) {
+				if (iset[i][1] == keywordtopfreq[j]) {
+					count++;
+				}
+			}
+		}
+		return count;
+	};
+
+	var updateTopFreqKeywords = function () {
+		keywordtopfreq = [];
+		for (var i = 0; i < keywords.length; i++) {
+			if (keywordtopfreq.length < keywordtopfreqnum) {
+				keywordtopfreq.push(keywords[i]);
+				sortf();
+			}
+			else if (keywordfreqs[i] > keywordtopfreq[keywordtopfreqnum - 1]) {
+				keywordtopfreq[keywordtopfreqnum - 1] = keywords[i];
+				sortf();
+			}
+		}
+	};
+
+	 var sortf = function (left, right) {
+		 left = typeof left !== 'undefined' ? left : 0;
+		 right = typeof right !== 'undefined' ? right : keywordtopfreq.length - 1;
+		 var index;
+		 if (keywordtopfreq.length > 1) {
+			 index = partitionf(left, right);
+			 if (left < index - 1) {
+				 sortf(left, index - 1);
+			 }
+			 if (index < right) {
+				 sortf(index, right);
+			 }
+		 }
+	 };
+
+	 var partitionf = function (left, right) {
+		 var pivot = keywordtopfreq[Math.floor((right + left) / 2)],
+			 i = left,
+			 j = right;
+
+		 while (i <= j) {
+			 while (keywordtopfreq[i] < pivot) {
+				 i++;
+			 }
+			 while (keywordtopfreq[j] > pivot) {
+				 j--;
+			 }
+			 if (i <= j) {
+				 swapf(i, j);
+				 i++;
+				 j--;
+			 }
+		 }
+		 return i;
+	 };
+
+	 var swapf = function (k1, k2) {
+		 var temp = keywordtopfreq[k1];
+		 keywordtopfreq[k1] = keywordtopfreq[k2];
+		 keywordtopfreq[k2] = temp;
+	 };
 
 	var calculateValue = function (iset, newvector) {
 		var tempiset = iset;
@@ -196,6 +270,7 @@ var indexer = (function () {
 		for (var i = 0; i < docwords.length; i++) {
 			if (keywords.indexOf(docwords[i]) == -1) {
 				addKeyword(docwords[i]);
+				keywordfreqs.push(weights[i]);
 			}
 		}
 		sort();
@@ -204,7 +279,9 @@ var indexer = (function () {
 			newDoc.push(0);
 		}
 		for (var j = 0; j < docwords.length; j++) {
-			newDoc[binaryIndexOf(docwords[j])] = weights[j];
+			var bindex = binaryIndexOf(docwords[j]);
+			newDoc[bindex] = weights[j];
+			keywordfreqs[bindex] += weights[j];
 		}
 		contentmatrix.push(newDoc);
 		docDict[contentmatrix.length - 1] = id;
@@ -283,6 +360,11 @@ var indexer = (function () {
 		var temp = keywords[k1];
 		keywords[k1] = keywords[k2];
 		keywords[k2] = temp;
+
+		// Simultaneously sort keywordfreqs
+		var temp2 = keywordfreqs[k1];
+		keywordfreqs[k1] = keywordfreqs[k2];
+		keywordfreqs[k2] = temp2;
 	};
 
 	var rowSwap = function (r1, r2) {
@@ -300,6 +382,9 @@ var indexer = (function () {
 			"keywords": keywords,
 			"keywordvectors": keywordvectors,
 			"keywordweight": keywordweight,
+			"keywordfreqs": keywordfreqs,
+			"keywordtopfreq": keywordtopfreq,
+			"keywordtopfreqnum": keywordtopfreqnum,
 			"areKeywordVectorsUpdated": areKeywordVectorsUpdated,
 			"contentmatrix": contentmatrix,
 			"rkapproxuk": rkapproxuk,
@@ -314,6 +399,9 @@ var indexer = (function () {
 		keywords = savestate["keywords"];
 		keywordvectors = savestate["keywordvectors"];
 		keywordweight = savestate["keywordweight"];
+		keywordfreqs = savestate["keywordfreqs"];
+		keywordtopfreq = savestate["keywordtopfreq"];
+		keywordtopfreqnum = savestate["keywordtopfreqnum"];
 		areKeywordVectorsUpdated = savestate["areKeywordVectorsUpdated"];
 		contentmatrix = savestate["contentmatrix"];
 		rkapproxuk = savestate["rkapproxuk"];
@@ -326,9 +414,11 @@ var indexer = (function () {
 	var indexer = function () {
 		keywords = [];
 		contentmatrix = [];
+		keywordfreqs = [];
 		docDict = {};
 		approxRank = 2; // Defaults to 2
-		keywordweight = 100; // Defaults to 100
+		keywordweight = 50; // Defaults to 50
+		keywordtopfreqnum = 10; // Defaults to 10
 	};
 
 	// Alter Settings
@@ -340,6 +430,10 @@ var indexer = (function () {
 	var changeKeywordweight = function (weight) {
 		keywordweight = weight;
 		areKeywordVectorsUpdated = false;
+	};
+
+	var changeKeywordtopfreqnum = function (num) {
+		keywordtopfreqnum = num;
 	};
 
 	// Debugging
@@ -366,6 +460,7 @@ var indexer = (function () {
 		load: load,
 		changeApproxRank: changeApproxRank,
 		changeKeywordweight: changeKeywordweight,
+		changeKeywordtopfreqnum: changeKeywordtopfreqnum,
 		printKeywords: printKeywords,
 		printContentmatrix: printContentmatrix,
 		printDocVectors: printDocVectors
