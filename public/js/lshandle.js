@@ -22,7 +22,9 @@ $(window).load(function() {
 			}
 			i.changeApproxRank(Math.floor(p.pages.length*.8))
 			i.lsi();
-
+			i.changeUseAlt(true);
+			i.changeUseFreqForAlt(true);
+			i.changeUseTopFreqFolders(true);
 			cats = i.folderize(5);
 			for (var n in cats) {
 				addCategory(n,"categories");
