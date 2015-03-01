@@ -70,9 +70,55 @@ saveModal.click(function() {
 		saveModal.addClass('disabled');
 		saveModalProgress.addClass('active');
 		var input = bookmarkURL.val();
-		if (!input.match(/http:\/\//)) {
+		if (!input.match(/http:\/\//) && !input.match(/https:\/\//)) {
 			input = 'http://' + input;
 		}
+		var xhr = new XMLHttpRequest()
+		console.log(input)
+		xhr.open("GET",input)
+		xhr.onerror = function(e) {console.log(e)}
+		xhr.onload = function() {
+
+
+var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
+var type = "s" //allows for other types
+var title = xhr.response.match(/<title>(.+)<\/title>/)
+worker.postMessage(JSON.stringify([xhr.response.split("<body")[1].split("</body")[0].replace(/<[^>]*>/g, "").match(/\w+/g).join(" "),title ? title[1] : input,1.1]));
+worker.onmessage = function(event) {
+	console.log(event.data);
+	var bms = chrome.storage.sync.get("pages",function(val) {
+		var pages = []
+		if (val.pages) {
+			pages = val.pages
+		}
+		console.log(pages)
+		var loc = input.split("://")[1].split("#")[0];
+		if (pages.indexOf(loc) < 0) {
+			pages.push(loc)
+			console.log(chrome.storage.sync.set({"pages": pages}));
+			var a = {}
+			var arr = JSON.parse(event.data)
+			var dom = location.origin.split("://")[1].split(".");
+			arr.push(dom[dom.length-2]+":30.0");
+			var d = new Date();
+			a[loc] = [arr,title ? title[1] : input ,type,(d.getMonth()+1)+"/"+(d.getDay()+1)+"/"+(d.getYear()-100)]
+			console.log(a)
+			chrome.storage.sync.set(a);
+			/*createSnackbar("Page Saved","View Bookmarks", function() {
+				chrome.runtime.sendMessage({greeting: "bookmarks"})
+			});*/
+		} else {
+			/*createSnackbar("Page Already Saved","View Bookmarks", function() {
+				chrome.runtime.sendMessage({greeting: "bookmarks"})
+			});*/
+		}
+	})
+};
+
+	
+		}
+
+		xhr.send()
 		addCard('TEST!!!', undefined, input);
 		bookmarkURL.val('');
 		$('#modal-add').closeModal();
