@@ -21,6 +21,11 @@ $(window).load(function() {
 				
 			}
 			i.lsi();
+			$("#search-term").keypress(function(e) {
+				var c = i.query($("#search-term").val().split(" "));
+				
+			})
 		})
 	})
+
 })
