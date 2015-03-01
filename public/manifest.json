@@ -2,9 +2,12 @@
 	"manifest_version": 2,
 	"name": "Automark",
 	"version": "0.1.0",
+	"icons": {
+		"128":"crx/logo_128px.png"
+	},
 	"browser_action": {
 		"default_icon": {
-			"38": "crx/bookmark_logo.png"
+			"38": "crx/logo_64px.png"
 		},
 		"default_title": "Automark"
 	},
@@ -13,6 +16,10 @@
 	},
 	"permissions": [
 		"activeTab",
+		"tabs",
+		"bookmarks",
+		"http://*/*",
+		"https://*/*",
 		"storage"
 	],
 	"chrome_url_overrides": {

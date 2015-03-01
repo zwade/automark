@@ -1,4 +1,34 @@
+var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
+worker.postMessage(document.body.innerText);
+worker.onmessage = function(event) {
+	console.log(event.data);
+	var bms = chrome.storage.sync.get("pages",function(val) {
+		var pages = []
+		if (val.pages) {
+			pages = val.pages
+		}
+		console.log(pages)
+		var loc = location.href.split("://")[1].split("#")[0].split("?")[0];
+		if (pages.indexOf(loc) < 0) {
+			pages.push(loc)
+			console.log(chrome.storage.sync.set({"pages": pages}));
+			var a = {}
+			a[loc] = JSON.parse(event.data)
+			console.log(chrome.storage.sync.set(a));
+			createSnackbar("Page Saved","View Bookmarks", function() {
+				chrome.runtime.sendMessage({greeting: "bookmarks"})
+			});
+		} else {
+			createSnackbar("Page Already Saved","View Bookmarks", function() {
+				chrome.runtime.sendMessage({greeting: "bookmarks"})
+			});
+		}
+	})
+};
 
+spawnLightbox = function() {
+
+}
 
 /* This is a prototype */
 var createSnackbar = (function() {
@@ -58,28 +88,4 @@ var createSnackbar = (function() {
 		snackbar.style.opacity = 1;
 	};
 })();
-var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
-worker.postMessage(document.body.innerText);
-worker.onmessage = function(event) {
-	createSnackbar("Page Saved");
-	console.log(event.data);
-	var bms = chrome.storage.sync.get("pages",function(val) {
-		var pages = []
-		if (val.pages) {
-			pages = val.pages
-		}
-		console.log(pages)
-		var loc = location.href.split("://")[1].split("#")[0].split("?")[0];
-		if (pages.indexOf(loc) < 0) {
-			pages.push(loc)
-			console.log(chrome.storage.sync.set({"pages": pages}));
-			var a = {}
-			a[loc] = JSON.parse(event.data)
-			console.log(chrome.storage.sync.set(a));
-		}
-	})
-};
 
-spawnLightbox = function() {
-
-}
