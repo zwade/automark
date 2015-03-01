@@ -8,3 +8,12 @@ $('div.card.small').click(function() {
 $('#settings').click(function() {
 	$('#modal-settings').openModal();
 });
+$('.card').scrollfire({
+	onBottomIn: function(elm) {
+		$(elm).addClass('active');
+	}
+}).scrollfire({
+	onBottomHidden: function(elm) {
+		$(elm).removeClass('active');
+	}
+});

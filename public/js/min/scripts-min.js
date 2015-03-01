@@ -1,0 +1,1 @@
+var columns=[$("#col1"),$("#col2"),$("#col3")],numCards=0,newCard=function(a,s){columns[numCards%3].append("<div class='card small'><div class='card-image fill-card'><img src='"+s+"'/><span class='card-title'>"+a+"</span></div></div>"),numCards++};

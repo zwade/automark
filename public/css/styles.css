@@ -21,7 +21,11 @@ header, main, footer {
   header, main, footer {
     padding-left: 0; } }
 .card {
-  cursor: pointer; }
+  cursor: pointer;
+  margin-top: 5rem;
+  transition: margin 0.5s cubic-bezier(0.55, 0, 0.1, 1); }
+  .card.active {
+    margin-top: 0.5rem; }
   .card .fill-card {
     height: 100% !important; }
 

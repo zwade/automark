@@ -1,0 +1,1 @@
+!function($){scrollFire=function(o){$(window).scroll(function(){var n=$(window).scrollTop()+$(window).height();$.each(o,function(o,c){var e=c.selector,i=c.offset,l=c.callback,t=$(e),f=t.offset().top;n>f+i&&1!=c.done&&(l(t),c.done=!0)})})}}(jQuery);
