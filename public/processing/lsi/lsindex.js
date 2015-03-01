@@ -11,6 +11,7 @@ var indexer = (function () {
 	var keywordweight;
 	var keywordfreqs;
 	var keywordtopfreq;
+	var keywordtopfreqfreqs;
 	var keywordtopfreqnum;
 	var areKeywordVectorsUpdated = false;
 	var contentmatrix; //Stores by column
@@ -20,6 +21,9 @@ var indexer = (function () {
 	var docDict;
 
 	var useAlt;
+	var useFreqForAlt;
+	var useTopFreqFolders;
+	var useTopFreqFoldersThreshold;
 
 	// Create the indexing matrices
 	var lsi = function () {
@@ -43,6 +47,10 @@ var indexer = (function () {
 			}
 	 */
 	var folderize = function (foldernum) {
+		// If using top freq folders
+		if (useTopFreqFolders) {
+			return folderizeOnTopFreqFolders(useTopFreqFoldersThreshold,foldernum);
+		}
 		var out = {};
 		var foldernames = getFolders(foldernum);
 		for (var j = 0; j < foldernames.length; j++) {
@@ -77,12 +85,33 @@ var indexer = (function () {
 			var commonvect;
 			if (orig.hasOwnProperty(key)) {
 				for (var i = 0; i < orig[key].length; i++) {
-					if (typeof commonvect == 'undefined') {
-						commonvect = orig[key][i][0];
+
+					if (!useFreqForAlt) { // Use weights
+						if (typeof commonvect == 'undefined') {
+							commonvect = orig[key][i][0];
+						}
+						else {
+							commonvect = numeric.add(commonvect, orig[key][i][0]);
+						}
 					}
-					else {
-						commonvect = numeric.add(commonvect, orig[key][i][0]);
+					else { // Use frequency
+						var tempvect = [];
+						for (var j = 0; j < orig[key][i][0].length; j++) {
+							if (orig[key][i][0][j] > 0.5) {
+								tempvect.push(1);
+							}
+							else {
+								tempvect.push(0);
+							}
+						}
+						if (typeof commonvect == 'undefined') {
+							commonvect = tempvect;
+						}
+						else {
+							commonvect = numeric.add(commonvect, tempvect);
+						}
 					}
+
 					idarray.push(orig[key][i][1]);
 				}
 			}
@@ -98,6 +127,61 @@ var indexer = (function () {
 			usedkeywords.push(keywords[bestindex]);
 		}
 		return out;
+	};
+
+	var folderizeOnTopFreqFolders = function (threshold, foldernum) {
+		var out = {};
+
+		var folders = getUnrelatedTopFreqFolders(threshold, foldernum);
+		for (var j = 0; j < folders.length; j++) {
+			out[folders[j][1]] = [];
+		}
+		for (var i = 0; i < docvectors.length; i++) {
+			var infolder = getClosestFolder(docvectors[i], folders);
+			out[infolder].push(docDict[i]);
+		};
+
+		return out;
+	};
+
+	var getUnrelatedTopFreqFolders = function (threshold, foldernum) {
+		// Save state param of keywordtopfreq array
+		var oldfreqnum = keywordtopfreqnum;
+
+		keywordtopfreqnum = keywords.length;
+		updateTopFreqKeywords();
+		var folders = [];
+		var worstcase = [];
+		var count = 0;
+		while (folders.length < foldernum || count >= keywordtopfreq.length) {
+			if (folders.length == 0) {
+				folders.push([binaryIndexOf(keywordtopfreq[count]), keywordtopfreq[count]]);
+			}
+			else {
+				var bindex = binaryIndexOf(keywordtopfreq[count]);
+				var cosimavg = 0;
+				for (var i = 0; i < folders.length; i++) {
+					cosimavg += cosim(keywordvectors[bindex], keywordvectors[folders[i][0]]);
+				}
+				cosimavg /= folders.length;
+				if (cosimavg > threshold) {
+					folders.push([bindex, keywordtopfreq[bindex]]);
+				}
+				else {
+					worstcase.push([bindex, keywordtopfreq[bindex]]);
+				}
+			}
+		}
+		count = 0;
+		while (folders.length < foldernum) {
+			folders.push(worstcase[count]);  // Maybe change this
+		}
+
+		// Reset state of the keywordtopfreq array
+		keywordtopfreqnum = oldfreqnum;
+		updateTopFreqKeywords();
+
+		return folders;
 	};
 
 	var getClosestFolder = function (docvector, foldernames) {
@@ -171,13 +255,16 @@ var indexer = (function () {
 
 	var updateTopFreqKeywords = function () {
 		keywordtopfreq = [];
+		keywordtopfreqfreqs = [];
 		for (var i = 0; i < keywords.length; i++) {
 			if (keywordtopfreq.length < keywordtopfreqnum) {
 				keywordtopfreq.push(keywords[i]);
+				keywordtopfreqfreqs.push(keywordfreqs[i]);
 				sortf();
 			}
-			else if (keywordfreqs[i] > keywordtopfreq[keywordtopfreqnum - 1]) {
+			else if (keywordfreqs[i] > keywordtopfreqfreqs[keywordtopfreqnum - 1]) {
 				keywordtopfreq[keywordtopfreqnum - 1] = keywords[i];
+				keywordtopfreqfreqs[keywordtopfreqnum - 1] = keywordfreqs[i];
 				sortf();
 			}
 		}
@@ -185,9 +272,9 @@ var indexer = (function () {
 
 	 var sortf = function (left, right) {
 		 left = typeof left !== 'undefined' ? left : 0;
-		 right = typeof right !== 'undefined' ? right : keywordtopfreq.length - 1;
+		 right = typeof right !== 'undefined' ? right : keywordtopfreqfreqs.length - 1;
 		 var index;
-		 if (keywordtopfreq.length > 1) {
+		 if (keywordtopfreqfreqs.length > 1) {
 			 index = partitionf(left, right);
 			 if (left < index - 1) {
 				 sortf(left, index - 1);
@@ -199,15 +286,15 @@ var indexer = (function () {
 	 };
 
 	 var partitionf = function (left, right) {
-		 var pivot = keywordtopfreq[Math.floor((right + left) / 2)],
+		 var pivot = keywordtopfreqfreqs[Math.floor((right + left) / 2)],
 			 i = left,
 			 j = right;
 
 		 while (i <= j) {
-			 while (keywordtopfreq[i] < pivot) {
+			 while (keywordtopfreqfreqs[i] > pivot) {
 				 i++;
 			 }
-			 while (keywordtopfreq[j] > pivot) {
+			 while (keywordtopfreqfreqs[j] < pivot) {
 				 j--;
 			 }
 			 if (i <= j) {
@@ -220,9 +307,13 @@ var indexer = (function () {
 	 };
 
 	 var swapf = function (k1, k2) {
-		 var temp = keywordtopfreq[k1];
+		 var temp = keywordtopfreqfreqs[k1];
+		 keywordtopfreqfreqs[k1] = keywordtopfreqfreqs[k2];
+		 keywordtopfreqfreqs[k2] = temp;
+
+		 var temp2 = keywordtopfreq[k1];
 		 keywordtopfreq[k1] = keywordtopfreq[k2];
-		 keywordtopfreq[k2] = temp;
+		 keywordtopfreq[k2] = temp2;
 	 };
 
 	var calculateValue = function (iset, newvector) {
@@ -317,7 +408,7 @@ var indexer = (function () {
 		for (var i = 0; i < docwords.length; i++) {
 			if (keywords.indexOf(docwords[i]) == -1) {
 				addKeyword(docwords[i]);
-				keywordfreqs.push(weights[i]);
+				keywordfreqs.push(0);
 			}
 		}
 		sort();
@@ -467,6 +558,9 @@ var indexer = (function () {
 		keywordweight = 50; // Defaults to 50
 		keywordtopfreqnum = 10; // Defaults to 10
 		useAlt = true; // Defaults the second alternative method of folder creation
+		useTopFreqFolders = false; // Defaults to not using the top frequency folders
+		useFreqForAlt = false; // Defaults to using weights in the alt folderize method
+		useTopFreqFoldersThreshold = 0.5; // Defaults to a 0.5 threshold when comparing two keywords
 	};
 
 	// Alter Settings
@@ -486,6 +580,18 @@ var indexer = (function () {
 
 	var changeUseAlt = function (bool) {
 		useAlt = bool;
+	};
+
+	var changeUseTopFreqFolders = function (bool) {
+		useTopFreqFolders = bool;
+	};
+
+	var changeUseFreqForAlt = function (bool) {
+		useFreqForAlt = bool;
+	};
+
+	var changeUseTopFreqFoldersThreshold = function (bool) {
+		useTopFreqFoldersThreshold = bool;
 	};
 
 	// Debugging
@@ -514,6 +620,9 @@ var indexer = (function () {
 		changeKeywordweight: changeKeywordweight,
 		changeKeywordtopfreqnum: changeKeywordtopfreqnum,
 		changeUseAlt: changeUseAlt,
+		changeUseTopFreqFolders: changeUseTopFreqFolders,
+		changeUseFreqForAlt: changeUseFreqForAlt,
+		changeUseTopFreqFoldersThreshold: useTopFreqFoldersThreshold,
 		printKeywords: printKeywords,
 		printContentmatrix: printContentmatrix,
 		printDocVectors: printDocVectors
