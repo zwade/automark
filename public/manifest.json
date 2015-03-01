@@ -25,7 +25,7 @@
 	],
 	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 	"chrome_url_overrides": {
-		"bookmarks":"indextmp.html"
+		"bookmarks":"index.html"
 	},
 	"web_accessible_resources": [
 		"crx/worker.js"
