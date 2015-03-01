@@ -37,16 +37,14 @@ header, main, footer {
 	}
 }
 nav.top-nav {
-	height: 170px;
+	height: 132px;
 }
 div.nav-wrapper {
-	height: 122px;
+	height: 132px;
 }
 .page-title {
-	display: block;
-	width: 85%;
-	margin: 0 auto;
-	line-height: 122px;
+	padding-left: 1em;
+	line-height: 132px;
 	font-size: 48px;
 	font-weight: 300;
 }
@@ -54,6 +52,37 @@ div.nav-wrapper {
 	text-align: center;
 	color: #FFF;
 	font-size: 200px;
+}
+#search {
+	float: right;
+	line-height: 132px;
+	margin-right: 3rem;
+	&.active {
+		.input {
+			width: 300px;
+			transition: width .5s $swift-out;
+		}
+	}
+	.input {
+		float: right;
+		width: 0;
+		margin-top: 45px;
+		overflow: hidden;
+		transition: width .5s $swift-out;
+		input {
+			border-bottom: 1px solid #FFF;
+			transition: border-bottom 0.2s ease;
+		}
+		input:focus {
+			border-bottom: 1px solid transparent;
+			transition: border-bottom 0.2s ease;
+		}
+		.bar {
+			&:before, &:after {
+				background: $secondary-color;
+			}
+		}
+	}
 }
 .input {
 	position:relative;
@@ -85,12 +114,9 @@ div.nav-wrapper {
 		-moz-transition: 0.2s ease all;
 		-webkit-transition: 0.2s ease all;
 	}
-	%input-label {
+	input:focus ~ label, input:valid ~ label {
 		top:-20px;
 		font-size:1em;
-	}
-	input:focus ~ label, input:valid ~ label {
-		@extend %input-label;
 		color: $primary-color;
 	}
 	.bar {
