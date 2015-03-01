@@ -21,17 +21,22 @@
 
     a {
       color: #FFF;
+	  opacity: 0.75;
       display: block;
       width: 100%;
       height: 100%;
-      @include transition( color .28s ease);
+	  -webkit-font-smoothing: subpixel-antialiased;
+      @include transition( opacity .1s linear);
+	  &.active {
+		  opacity: 1;
+	  }
     }
   }
   .indicator {
     position: absolute;
     bottom: 0;
-    height: 2px;
-    background-color: #FFF;
+    height: 3px;
+    background-color: $secondary-color;
     will-change: left, right;
   }
 }

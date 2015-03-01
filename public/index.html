@@ -6,6 +6,7 @@
 	<title>Bookmarks</title>
 </head>
 <body>
+<!-- Navbar & Header -->
 <header>
 	<nav class="top-nav">
 		<div class="nav-wrapper">
@@ -19,6 +20,12 @@
 				</div>
 			</div>
 		</div>
+		<ul class="tabs">
+			<li class="tab col s3"><a class="active" href="#">Name</a></li>
+			<li class="tab col s3"><a href="#">Date</a></li>
+			<li class="tab col s3"><a href="#">Category</a></li>
+			<li class="tab col s3"><a href="#">Type</a></li>
+		</ul>
 		<ul id="nav-mobile" class="side-nav fixed">
 			<li class="logo">
 				<a href="index.html" id="logo-container" class="brand-logo">
@@ -40,6 +47,7 @@
 		<a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
 	</nav>
 </header>
+<!-- Content -->
 <main>
 	<div class="row">
 		<div class="col s12 m6 l4" id="col1">
@@ -59,7 +67,11 @@
 <div id="modal-settings" class="modal">
 	<div class="modal-content">
 		<h4>Settings</h4>
-		<p>A bunch of text</p>
+		<form action="#">
+			<p class="range-field">
+				<input type="range" id="filter-strength" min="1" max="5" />
+			</p>
+		</form>
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-action modal-close">Save</a>
@@ -68,7 +80,7 @@
 </div>
 <!-- Modal Bookmark Addition -->
 <div id="modal-add" class="modal">
-	<div class="modal-content">
+	<form id="add-form" class="modal-content">
 		<h4 style="padding-bottom: 1rem;">Add Bookmark</h4>
 		<div class="input">
 			<input id="new-url" type="text" autocomplete="off" required>
@@ -76,12 +88,16 @@
 			<span class="bar"></span>
 			<label for="new-url">URL</label>
 		</div>
+	</form>
+	<div class="progress">
+		<div class="indeterminate"></div>
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-action" id="save-bookmark">Save</a>
 		<a class="waves-effect btn-flat modal-action modal-close">Cancel</a>
 	</div>
 </div>
+<!-- Scripts -->
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/bin/materialize.js"></script>
 <script type="text/javascript" src="js/setup-scroll.js"></script>

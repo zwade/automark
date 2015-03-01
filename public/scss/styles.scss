@@ -2,24 +2,24 @@
 $swift-out: cubic-bezier(.55,0,.1,1);
 .card-title {
 	width: 100%;
-	background-color:$primary-color;
+	background-color: $primary-color;
 }
 ul li.logo {
 	margin-top: 16px;
-	margin-bottom: 132px;
+	margin-bottom: 180px;
 	padding-left: 0;
 }
 header, main, footer {
 	padding-left: 240px;
 }
 #logo-container {
-	height: 116px;
+	height: 164px;
 	width: 100%;
 	padding: 0 0 16px 0;
 	border-bottom: 1px solid #ddd;
 }
 #main-logo {
-	margin-left: 70px;
+	margin-left: 46px;
 	height: 100%;
 }
 @media only screen and (max-width : 992px) {
@@ -41,7 +41,7 @@ header, main, footer {
 	}
 }
 nav.top-nav {
-	height: 132px;
+	height: 180px;
 }
 div.nav-wrapper {
 	height: 132px;
@@ -86,6 +86,13 @@ div.nav-wrapper {
 				background: $secondary-color;
 			}
 		}
+	}
+}
+.progress {
+	display: none;
+	background-color: transparent;
+	&.active {
+		display: block;
 	}
 }
 .input {

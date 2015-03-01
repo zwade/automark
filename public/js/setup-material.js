@@ -2,9 +2,6 @@ var searchIcon = $('#search'),
 	searchTerm = $('#search-term');
 
 $('.button-collapse').sideNav();
-$('div a.btn-floating').click(function() {
-	$('#modal-add').openModal();
-});
 $('#settings').click(function() {
 	$('#modal-settings').openModal();
 });
