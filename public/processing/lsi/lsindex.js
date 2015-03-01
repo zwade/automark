@@ -19,6 +19,8 @@ var indexer = (function () {
 	var docvectors;
 	var docDict;
 
+	var useAlt;
+
 	// Create the indexing matrices
 	var lsi = function () {
 		var svd = numeric.svd(numeric.transpose(contentmatrix));
@@ -46,9 +48,54 @@ var indexer = (function () {
 		for (var j = 0; j < foldernames.length; j++) {
 			out[foldernames[j][1]] = [];
 		}
+
 		for (var i = 0; i < docvectors.length; i++) {
 			var infolder = getClosestFolder(docvectors[i], foldernames);
-			out[infolder].push(docDict[i]);
+			if (useAlt) {
+				out[infolder].push([contentmatrix[i], docDict[i]]); // for alt chooseing folder
+			}
+			else {
+				out[infolder].push(docDict[i]);
+			}
+		}
+
+		if (useAlt) {
+			// Alt choosing folder
+			// Rechooses based on the groups already made, but with different folder categories
+			return rechooseFolders(out);
+		}
+		else {
+			return out;
+		}
+	};
+
+	var rechooseFolders = function (orig) {
+		var usedkeywords = [];
+		var out = {};
+		for (var key in orig) {
+			var idarray = [];
+			var commonvect;
+			if (orig.hasOwnProperty(key)) {
+				for (var i = 0; i < orig[key].length; i++) {
+					if (typeof commonvect == 'undefined') {
+						commonvect = orig[key][i][0];
+					}
+					else {
+						commonvect = numeric.add(commonvect, orig[key][i][0]);
+					}
+					idarray.push(orig[key][i][1]);
+				}
+			}
+			var maxcommon = 0;
+			var bestindex = -1;
+			for (var j = 0; j < commonvect.length; j++) {
+				if (commonvect[j] > maxcommon && usedkeywords.indexOf(keywords[j]) == -1) {
+					maxcommon = commonvect[j];
+					bestindex = j;
+				}
+			}
+			out[keywords[bestindex]] = idarray;
+			usedkeywords.push(keywords[bestindex]);
 		}
 		return out;
 	};
@@ -419,6 +466,7 @@ var indexer = (function () {
 		approxRank = 2; // Defaults to 2
 		keywordweight = 50; // Defaults to 50
 		keywordtopfreqnum = 10; // Defaults to 10
+		useAlt = true; // Defaults the second alternative method of folder creation
 	};
 
 	// Alter Settings
@@ -434,6 +482,10 @@ var indexer = (function () {
 
 	var changeKeywordtopfreqnum = function (num) {
 		keywordtopfreqnum = num;
+	};
+
+	var changeUseAlt = function (bool) {
+		useAlt = bool;
 	};
 
 	// Debugging
@@ -461,6 +513,7 @@ var indexer = (function () {
 		changeApproxRank: changeApproxRank,
 		changeKeywordweight: changeKeywordweight,
 		changeKeywordtopfreqnum: changeKeywordtopfreqnum,
+		changeUseAlt: changeUseAlt,
 		printKeywords: printKeywords,
 		printContentmatrix: printContentmatrix,
 		printDocVectors: printDocVectors
