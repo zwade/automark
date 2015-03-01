@@ -11,7 +11,7 @@ chrome.runtime.onMessage.addListener(function(req, sender, res) {
 		chrome.tabs.captureVisibleTab({quality:1},function(img) {
 			console.log(img.length);
 			var a = {}
-			var loc = sender.tab.url.split("://")[1].split("#")[0].split("?")[0]
+			var loc = sender.tab.url.split("://")[1].split("#")[0]
 			console.log(loc);
 			a[loc] = img
 			chrome.storage.local.set(a);

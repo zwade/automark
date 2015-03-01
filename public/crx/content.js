@@ -1,6 +1,6 @@
 var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
 var type = "s" //allows for other types
-worker.postMessage(document.body.innerText);
+worker.postMessage(JSON.stringify([document.body.innerText,document.title,1.1]));
 worker.onmessage = function(event) {
 	console.log(event.data);
 	var bms = chrome.storage.sync.get("pages",function(val) {
@@ -9,7 +9,7 @@ worker.onmessage = function(event) {
 			pages = val.pages
 		}
 		console.log(pages)
-		var loc = location.href.split("://")[1].split("#")[0].split("?")[0];
+		var loc = location.href.split("://")[1].split("#")[0];
 		if (pages.indexOf(loc) < 0) {
 			pages.push(loc)
 			console.log(chrome.storage.sync.set({"pages": pages}));
