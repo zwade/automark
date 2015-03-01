@@ -3,7 +3,6 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
-	<link type="text/css" rel="stylesheet" href="css/styles.css"/>
 	<title>Bookmarks</title>
 </head>
 <body>
@@ -23,8 +22,18 @@
 				<a href="index.html" id="logo-container" class="brand-logo">
 					<img id="main-logo" src="images/logo_512px.png"/>
 				</a></li>
-			<li><a class="waves-effect">All Bookmarks</a></li>
-			<li><a class="waves-effect" id="settings">Settings</a></li>
+			<li class="no-padding">
+				<ul class="collapsible collapsible-accordion">
+					<li>
+						<a class="collapsible-header"><b>Categories</b></a>
+						<div class="collapsible-body">
+							<ul id="categories">
+							</ul>
+						</div>
+					</li>
+				</ul>
+			</li>
+			<li><a class="waves-effect" id="settings"><b>Settings</b></a></li>
 		</ul>
 		<a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
 	</nav>
@@ -32,82 +41,16 @@
 <main>
 	<div class="row">
 		<div class="col s12 m6 l4" id="col1">
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
 		</div>
 		<div class="col s12 m6 l4" id="col2">
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
 		</div>
 		<div class="col s12 m6 l4" id="col3">
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
-			<div class="card small">
-				<div class="card-image fill-card">
-					<img src="images/logo_512px.png"/>
-					<span class="card-title">Card Title</span>
-				</div>
-			</div>
 		</div>
 	</div>
 </main>
 <div class="fixed-action-btn" style="bottom: 24px; right: 24px;">
 	<a class="btn-floating btn-large waves-effect waves-light red">
-		<i class="large mdi-editor-mode-edit"></i>
+		<i class="large mdi-content-add"></i>
 	</a>
 	<ul>
 		<li><a class="btn-floating waves-effect waves-light red"><i class="large mdi-editor-insert-chart"></i></a></li>
@@ -124,6 +67,22 @@
 	</div>
 	<div class="modal-footer">
 		<a class="waves-effect btn-flat modal-action modal-close">Save</a>
+		<a class="waves-effect btn-flat modal-action modal-close">Cancel</a>
+	</div>
+</div>
+<!-- Modal Bookmark Addition -->
+<div id="modal-add" class="modal">
+	<div class="modal-content">
+		<h4 style="padding-bottom: 1rem;">Add Bookmark</h4>
+		<div class="input">
+			<input id="new-url" type="text" autocomplete="off" required>
+			<span class="highlight"></span>
+			<span class="bar"></span>
+			<label for="new-url">URL</label>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a class="waves-effect btn-flat modal-action" id="save-bookmark">Save</a>
 		<a class="waves-effect btn-flat modal-action modal-close">Cancel</a>
 	</div>
 </div>

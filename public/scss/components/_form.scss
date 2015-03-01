@@ -112,7 +112,7 @@ textarea {
    background-color: transparent;
 }
 
-input[type=text],
+/*input[type=text],
 input[type=password],
 input[type=email],
 input[type=url],
@@ -147,7 +147,7 @@ input[type=search]:focus,
 textarea:focus.materialize-textarea {
   border-bottom: 1px solid $input-focus-color;
   @include box-shadow(0 1px 0 0 $input-focus-color);
-}
+}*/
 
 textarea.materialize-textarea {
   overflow-y: hidden; /* prevents scroll bar flash */

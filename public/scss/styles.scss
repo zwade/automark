@@ -24,11 +24,13 @@ header, main, footer {
 	}
 }
 .card {
+	background-color: $primary-color;
 	cursor: pointer;
 	margin-top: 5rem;
-	transition: margin .5s $swift-out;
+	transition: margin 0s;
 	&.active {
 		margin-top: 0.5rem;
+		transition: margin .5s ease-out;
 	}
 	.fill-card {
 		height: 100% !important;
@@ -47,4 +49,99 @@ div.nav-wrapper {
 	line-height: 122px;
 	font-size: 48px;
 	font-weight: 300;
+}
+.bookmark-icon {
+	text-align: center;
+	color: #FFF;
+	font-size: 200px;
+}
+.input {
+	position:relative;
+	margin: 24px 0;
+	input {
+		font-size: 18px;
+		padding: 10px 10px 10px 5px;
+		display: block;
+		width: 300px;
+		border: none;
+		background-color: transparent;
+		border-bottom: 1px solid #757575;
+		transition: border-bottom 0.2s ease;
+	}
+	input:focus {
+		outline: none;
+		border-bottom: 1px solid transparent;
+		transition: border-bottom 0.2s ease;
+	}
+	label {
+		color: #999;
+		font-size: 1.4em;
+		font-weight: normal;
+		position: absolute;
+		pointer-events: none;
+		left: 5px;
+		top: 10px;
+		transition: 0.2s ease all;
+		-moz-transition: 0.2s ease all;
+		-webkit-transition: 0.2s ease all;
+	}
+	%input-label {
+		top:-20px;
+		font-size:1em;
+	}
+	input:focus ~ label, input:valid ~ label {
+		@extend %input-label;
+		color: $primary-color;
+	}
+	.bar {
+		position:relative;
+		display:block;
+		width:300px;
+		&:before, &:after {
+			content:'';
+			height:2px;
+			width:0;
+			bottom:1px;
+			position:absolute;
+			background: $primary-color;
+			transition:0.2s ease all;
+			-moz-transition:0.2s ease all;
+			-webkit-transition:0.2s ease all;
+		}
+		&:before {
+			left: 50%;
+		}
+		&:after {
+			right: 50%;
+		}
+	}
+	input:focus ~ .bar:before, input:focus ~ .bar:after {
+		width:50%;
+	}
+	.highlight {
+		position:absolute;
+		height:60%;
+		width:100px;
+		top:25%;
+		left:0;
+		pointer-events:none;
+		opacity:0.5;
+	}
+	input:focus ~ .highlight {
+		-webkit-animation:inputHighlighter 0.3s ease;
+		-moz-animation:inputHighlighter 0.3s ease;
+		animation:inputHighlighter 0.3s ease;
+	}
+}
+@-webkit-keyframes inputHighlighter {
+	from { background:$primary-color; }
+	to 	{ width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+	from { background:$primary-color; }
+	to 	{ width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+	from { background:$primary-color; }
+	to 	{ width:0; background:transparent; }
 }
