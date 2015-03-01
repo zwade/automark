@@ -204,117 +204,142 @@
         <div id="tagged_text"></div>
 
         <script type="text/javascript">
-            // Note the \ at the end of the first line
-            var words = new Lexer().lex(document.getElementById("input_text").innerHTML);
-            var freq = {};
-            var keywords = [];
-            var taggedWords = new POSTagger().tag(words);
-            var total = taggedWords.length;
-            console.log(total);
-            var threshold = 1.1*Math.log(total);
-            console.log(threshold);
-            var result = "";
-            for (i in taggedWords) {
-                var taggedWord = taggedWords[i];
-                var word = taggedWord[0].toLowerCase();
-                var tag = taggedWord[1];
-                if(tag.substring(0,2) == "NN" && tag.indexOf("S")==-1){
-                    if(freq[word]===undefined)
-                        freq[word]=1;
-                    else
-                        freq[word]++;
-                    /*if(tag == "NNP")
-                        freq[word] = 10000;*/
-                }
-                if(freq[word]!==undefined && freq[word]>=threshold/2 && keywords.indexOf(word)==-1 && word.length>=3)
-                    keywords.push(word);
-            }
-            var stems = [];
-            for (i in keywords){
-                var word = keywords[i];
-                var stem = word.substring(0, word.length/2)
-                if (stem.length>=4)
-                    stems.push(stem);
-            }
-            var groups = {};
-            var wordsWithStems = [];
-            for (i in stems){
-                stem = stems[i];
-                for (j in keywords){
-                    word = keywords[j];
-                    if (word.indexOf(stem)!=-1){
-                        wordsWithStems.push(word);
-                        if(groups[stem]===undefined)
-                            groups[stem] = [word];
+            var text = document.getElementById("input_text").innerHTML;
+            var title = "Apoptosis of the Cell";
+            function getKeyWords(text, title, thresholdFactor){
+                var textToParse = text + title;
+                var words = new Lexer().lex(textToParse);
+                var freq = {};
+                var keywords = [];
+                var taggedWords = new POSTagger().tag(words);
+                var total = taggedWords.length;
+                console.log(total);
+                var threshold = thresholdFactor*Math.log(total);
+                console.log(threshold);
+                var result = "";
+                var title2 = title.toLowerCase();
+                titleArray = title2.split(" ");
+                console.log(titleArray);
+                var keywordsInTitle = [];
+                for (i in taggedWords) {
+                    var taggedWord = taggedWords[i];
+                    var word = taggedWord[0].toLowerCase();
+                    var tag = taggedWord[1];
+                    if(tag.substring(0,2) == "NN" && tag.indexOf("S")==-1){
+                        if(freq[word]===undefined)
+                            freq[word]=1;
                         else
-                            groups[stem].push(word);
+                            freq[word]++;
+                        if(titleArray.indexOf(word)!=-1 && keywordsInTitle.indexOf(word)==-1)
+                            keywordsInTitle.push(word);
+                    }
+                    if(freq[word]!==undefined && freq[word]>=threshold/2 && keywords.indexOf(word)==-1 && word.length>=3)
+                        keywords.push(word);
+                }
+                var stems = [];
+                for (i in keywords){
+                    var word = keywords[i];
+                    var stem = word.substring(0, word.length/2)
+                    if (stem.length>=4)
+                        stems.push(stem);
+                }
+                var groups = {};
+                var wordsWithStems = [];
+                for (i in stems){
+                    stem = stems[i];
+                    for (j in keywords){
+                        word = keywords[j];
+                        if (word.indexOf(stem)!=-1){
+                            wordsWithStems.push(word);
+                            if(groups[stem]===undefined)
+                                groups[stem] = [word];
+                            else
+                                groups[stem].push(word);
+                        }
                     }
                 }
-            }
-            groups["nostem"] = [];
-            for(i in keywords){
-                word = keywords[i];
-                if(wordsWithStems.indexOf(word)==-1)
-                    groups["nostem"].push(word);
-            }
-            var stemsToDelete = [];
-            for(stem1 in groups){
-                if(stem1 != "nostem"){
-                    if(groups[stem1].length == 1){
-                        for(stem2 in groups){
-                            if(stem2 != "nostem" && stem2 != stem1 && groups[stem2].indexOf(groups[stem1][0]) != -1){
-                                stemsToDelete.push(stem1);
+                groups["nostem"] = [];
+                for(i in keywords){
+                    word = keywords[i];
+                    if(wordsWithStems.indexOf(word)==-1)
+                        groups["nostem"].push(word);
+                }
+                var stemsToDelete = [];
+                for(stem1 in groups){
+                    if(stem1 != "nostem"){
+                        if(groups[stem1].length == 1){
+                            for(stem2 in groups){
+                                if(stem2 != "nostem" && stem2 != stem1 && groups[stem2].indexOf(groups[stem1][0]) != -1){
+                                    stemsToDelete.push(stem1);
+                                }
                             }
                         }
                     }
                 }
-            }
-            /*for(stem in groups){
-                console.log(stem+" : "+groups[stem]);
-            }*/
-            for(i in stemsToDelete)
-                delete groups[stemsToDelete[i]];
-            var theRealKeyWords = [];
-            for (stem in groups){
-                if(stem != "nostem"){
-                    group = groups[stem];
-                    var maxFreq = 0;
-                    var maxWord = "";
-                    for (i in group){
-                        word = group[i];
-                        if (freq[word]>maxFreq){
-                            maxFreq = freq[word];
-                            maxWord = word;
+                /*for(stem in groups){
+                    console.log(stem+" : "+groups[stem]);
+                }*/
+                for(i in stemsToDelete)
+                    delete groups[stemsToDelete[i]];
+                var theRealKeyWords = [];
+                var ultimateMaxFreq = 0;
+                for (stem in groups){
+                    if(stem != "nostem"){
+                        group = groups[stem];
+                        var maxFreq = 0;
+                        var maxWord = "";
+                        for (i in group){
+                            word = group[i];
+                            if (freq[word]>maxFreq){
+                                maxFreq = freq[word];
+                                maxWord = word;
+                            }
                         }
-                    }
-                    if(freq[maxWord]>=threshold){
-                        theRealKeyWords.push(maxWord);
+                        if(freq[maxWord]>=threshold){
+                            theRealKeyWords.push(maxWord);
+                        }
+                        if(maxFreq>ultimateMaxFreq)
+                            ultimateMaxFreq = maxFreq;
                     }
                 }
+                /*for(stem in groups){
+                    console.log(stem+" : "+groups[stem]);
+                }*/
+                for(i in groups["nostem"]){
+                    if(freq[groups["nostem"][i]]>=threshold)
+                        theRealKeyWords.push(groups["nostem"][i]);
+                }
+                function uniq(a) {
+                    var seen = {};
+                    return a.filter(function(item) {
+                        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+                    });
+                }
+                theRealKeyWords = uniq(theRealKeyWords);
+                theRealKeyWords.sort();
+                var keywordsFinal = [];
+                console.log(theRealKeyWords);
+                console.log(keywordsInTitle);
+                for (i in keywordsInTitle){
+                    titleWord = keywordsInTitle[i];
+                    if(theRealKeyWords.indexOf(titleWord)==-1){
+                        theRealKeyWords.push(titleWord);
+                        freq[titleWord] = 1;
+                    }
+                    else{
+                        freq[titleWord] += 0.2*ultimateMaxFreq;
+                    }                        
+                }
+                result += ("Number of KeyWords: " + theRealKeyWords.length + "<br/><br/>");
+                for (word in theRealKeyWords){
+                    var ans = theRealKeyWords[word] + ":" + freq[theRealKeyWords[word]];
+                    keywordsFinal.push(ans);
+                    result += (ans + "<br/>");
+                }
+                document.getElementById("tagged_text").innerHTML = result;
+                return keywordsFinal;
             }
-            for(stem in groups){
-                console.log(stem+" : "+groups[stem]);
-            }
-            for(i in groups["nostem"]){
-                if(freq[groups["nostem"][i]]>=threshold)
-                    theRealKeyWords.push(groups["nostem"][i]);
-            }
-            result += ("Number of KeyWords: " + theRealKeyWords.length + "<br/><br/>");
-            function uniq(a) {
-                var seen = {};
-                return a.filter(function(item) {
-                    return seen.hasOwnProperty(item) ? false : (seen[item] = true);
-                });
-            }
-            theRealKeyWords = uniq(theRealKeyWords);
-            theRealKeyWords.sort();
-            var keywordsFinal = [];
-            for (word in theRealKeyWords){
-                var ans = theRealKeyWords[word] + ":" + freq[theRealKeyWords[word]];
-                keywordsFinal.push(ans);
-                result += (ans + "<br/>");
-            }
-            document.getElementById("tagged_text").innerHTML = result;
+            getKeyWords(text, title, 1.1);
         </script>
 
     </body>
