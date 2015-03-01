@@ -21,10 +21,12 @@ $(window).load(function() {
 				
 			}
 			i.changeApproxRank(Math.floor(p.pages.length*.8))
-			i.lsi();
+			i.lsi();/*
 			i.changeUseAlt(true);
 			i.changeUseFreqForAlt(true);
-			i.changeUseTopFreqFolders(true);
+			i.changeUseTopFreqFoldersThreshold(0.3);
+			i.changeKeywordtopfreqnum(20);
+			i.changeUseTopFreqFolders(true);*/
 			cats = i.folderize(5);
 			for (var n in cats) {
 				addCategory(n,"categories");

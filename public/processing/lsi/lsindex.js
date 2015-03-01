@@ -167,13 +167,14 @@ var indexer = (function () {
 					cosimavg += cosim(keywordvectors[bindex], keywordvectors[folders[i][0]]);
 				}
 				cosimavg /= folders.length;
-				if (cosimavg > threshold) {
+				if (cosimavg < threshold) {
 					folders.push([bindex, keywordtopfreq[bindex]]);
 				}
 				else {
 					worstcase.push([bindex, keywordtopfreq[bindex]]);
 				}
 			}
+			count++;
 		}
 		count = 0;
 		while (folders.length < foldernum) {
@@ -625,7 +626,7 @@ var indexer = (function () {
 		changeUseAlt: changeUseAlt,
 		changeUseTopFreqFolders: changeUseTopFreqFolders,
 		changeUseFreqForAlt: changeUseFreqForAlt,
-		changeUseTopFreqFoldersThreshold: useTopFreqFoldersThreshold,
+		changeUseTopFreqFoldersThreshold: changeUseTopFreqFoldersThreshold,
 		printKeywords: printKeywords,
 		printContentmatrix: printContentmatrix,
 		printDocVectors: printDocVectors
