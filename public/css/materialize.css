@@ -5540,7 +5540,7 @@ small {
 .tabs {
   position: relative;
   height: 48px;
-  background-color: #FFF;
+  background-color: #64B5F6;
   margin: 0 auto;
   width: 100%;
   white-space: nowrap; }
@@ -5548,7 +5548,7 @@ small {
     display: block;
     float: left;
     text-align: center;
-    background-color: #fff;
+    background-color: #64B5F6;
     line-height: 48px;
     height: 48px;
     padding: 0 20px;
@@ -5557,7 +5557,7 @@ small {
     letter-spacing: .8px;
     width: 15%; }
     .tabs li.tab a {
-      color: #64B5F6;
+      color: #FFF;
       display: block;
       width: 100%;
       height: 100%;
@@ -5566,13 +5566,11 @@ small {
       -o-transition: color 0.28s ease;
       -ms-transition: color 0.28s ease;
       transition: color 0.28s ease; }
-      .tabs li.tab a:hover {
-        color: #c4e3fc; }
   .tabs .indicator {
     position: absolute;
     bottom: 0;
     height: 2px;
-    background-color: #acd8fa;
+    background-color: #FFF;
     will-change: left, right; }
 
 ul.tabs li.tab {
