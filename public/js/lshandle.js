@@ -27,7 +27,7 @@ $(window).load(function() {
 			i.changeUseTopFreqFoldersThreshold(0.3);
 			i.changeKeywordtopfreqnum(20);
 			i.changeUseTopFreqFolders(true);*/
-			cats = i.folderize(5);
+			cats = i.folderize(localStorage.getItem("num") || 5);
 			for (var n in cats) {
 				addCategory(n,"categories");
 			}
