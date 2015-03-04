@@ -1,19 +1,22 @@
 var columns = [$('#col1'), $('#col2'), $('#col3')],
-	categories = $('#categories'),
 	numCards = 0,
 	bookmarkURL = $('#new-url'),
-	saveModal = $('#save-bookmark'),
-	saveModalContainer = $('#modal-add'),
-	saveModalProgress = saveModalContainer.find('.progress'),
-	importModal = $('#modal-import'),
 	tabs = $('.tabs'),
 	datePicker = $('.datepicker'),
+	searchIcon = $('#search'),
+	searchTerm = $('#search-term'),
 	urlRegEx = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-]*)?\??(?:[\-\+=&;%@\.\w]*)#?(?:[\.!\/\\\w]*))?)/g,
 
+	modalSave = $('#save-bookmark'),
+	modalSaveContainer = $('#modal-add'),
+	modalSaveProgress = modalSaveContainer.find('.progress'),
+	modalImport = $('#modal-import'),
+	modalImportYes = $('#import-yes'),
+
+	modalSettings = $('#modal-settings'),
 	settingAutomatic = $('#automatic-quantity'),
 	settingAlgorithm = $('#sorting-algorithm'),
 	settingNumber = $('#folder-quantity');
-
 var addCard = function(title, image, link) {
 	var img = '<img src=\'' + image + '\'/>';
 	if (image === undefined) {
@@ -62,73 +65,55 @@ var removeCards = function() {
 	});
 };
 var validateURL = function() {
-	if (!saveModalProgress.hasClass('active') && bookmarkURL.val().match(urlRegEx)) {
-		saveModal.removeClass('disabled');
+	if (!modalSaveProgress.hasClass('active') && bookmarkURL.val().match(urlRegEx)) {
+		modalSave.removeClass('disabled');
 	} else {
-		saveModal.addClass('disabled');
+		modalSave.addClass('disabled');
 	}
 };
+var importBookmarks = function() {
+	modalImport.find('.modal-content').html('<h4>Importing Bookmarks</h4>');
+	modalImport.find('.progress').addClass('active');
+	modalImportYes.addClass('disabled');
+	// Insert import code here
+};
+var resetImportModal = function() {
+	modalImport.find('.modal-content').html('<h4>Import Bookmarks</h4>' +
+	'\nWould you like to import all existing bookmarks?');
+	modalImport.find('.progress').removeClass('active');
+	modalImportYes.removeClass('disabled');
+};
 bookmarkURL[0].oninput = validateURL;
-saveModal.click(function() {
-	if (!saveModal.hasClass('disabled')) {
-		saveModal.addClass('disabled');
-		saveModalProgress.addClass('active');
-		var input = bookmarkURL.val();
-		if (!input.match(/http:\/\//) && !input.match(/https:\/\//)) {
-			input = 'http://' + input;
-		}
-		var xhr = new XMLHttpRequest();
-		console.log(input);
-		xhr.open("GET",input);
-		xhr.onerror = function(e) {console.log(e)};
-		xhr.onload = function() {
-			var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
-			var type = "s"; //allows for other types
-			var title = xhr.response.match(/<title>(.+)<\/title>/);
-			worker.postMessage(JSON.stringify([xhr.response.split("<body")[1].split("</body")[0].replace(/<[^>]*>/g, "").match(/\w+/g).join(" "),title ? title[1] : input,1.1]));
-			worker.onmessage = function(event) {
-				console.log(event.data);
-				var bms = chrome.storage.sync.get("pages",function(val) {
-					var pages = [];
-					if (val.pages) {
-						pages = val.pages
-					}
-					console.log(pages);
-					var loc = input.split("://")[1].split("#")[0];
-					if (pages.indexOf(loc) < 0) {
-						pages.push(loc);
-						console.log(chrome.storage.sync.set({"pages": pages}));
-						var a = {},
-							arr = JSON.parse(event.data),
-							dom = location.origin.split("://")[1].split("."),
-							d = new Date();
-						arr.push(dom[dom.length-2]+":30.0");
-						a[loc] = [arr,title ? title[1] : input ,type,(d.getMonth()+1)+"/"+(d.getDay()+1)+"/"+(d.getYear()-100)]
-						chrome.storage.sync.set(a);
-						/*createSnackbar("Page Saved","View Bookmarks", function() {
-						 chrome.runtime.sendMessage({greeting: "bookmarks"})
-						 });*/
-					} else {
-						/*createSnackbar("Page Already Saved","View Bookmarks", function() {
-						 chrome.runtime.sendMessage({greeting: "bookmarks"})
-						 });*/
-					}
-				})
-			};
-		};
-		xhr.send();
-		addCard(input, undefined, input);
-		bookmarkURL.val('');
-		$('#modal-add').closeModal();
+$('.button-collapse').sideNav();
+$('#settings').click(function() {
+	modalSettings.openModal();
+});
+searchTerm.change(function() {
+	//filter cards
+});
+searchIcon.children().first().click(function() {
+	if (searchIcon.hasClass('active')) {
+		searchTerm.blur();
+		setTimeout(function() {
+			searchIcon.removeClass('active');
+		}, 100);
+		setTimeout(function() {
+			searchTerm.val('');
+		}, 500);
+	} else {
+		searchIcon.addClass('active');
+		setTimeout(function() {
+			searchTerm.focus();
+		}, 300);
 	}
 });
 $('.fixed-action-btn').find('a.btn-floating').click(function() {
-	saveModalContainer.openModal();
-	saveModalProgress.removeClass('active');
-	saveModal.addClass('disabled');
+	modalSaveContainer.openModal();
+	modalSaveProgress.removeClass('active');
+	modalSave.addClass('disabled');
 });
 $('#add-form').submit(function() {
-	saveModal.click();
+	modalSave.click();
 	event.preventDefault();
 });
 datePicker.pickadate({
@@ -148,12 +133,15 @@ $(document).delegate('#save-settings', 'click', function() {
 	} else {
 		localStorage.setItem('num', settingNumber.val());
 	}
-});
-$(document).delegate('#import-yes', 'click', function() {
-	importModal.find('.modal-content').html('<h4>Importing Bookmarks</h4>');
-	importModal.find('.progress').addClass('active');
-	$('#import-yes').addClass('disabled');
-	// Insert import code here
+}).delegate('#import-yes', 'click', importBookmarks)
+.delegate('#import', 'click', function() {
+	// Wait for animation to finish, then wait a little more
+	modalSettings.closeModal({complete: function() {
+		setTimeout(function() {
+			modalImport.openModal({complete: resetImportModal});
+			importBookmarks();
+		}, 10);
+	}});
 });
 settingAutomatic.change(function() {
 	if(settingAutomatic.is(':checked')) {
@@ -163,12 +151,59 @@ settingAutomatic.change(function() {
 		settingNumber.prop('disabled', false);
 		settingAlgorithm.prop('disabled', false);
 	}
-});
-$(document).ready(function() {
+}).ready(function() {
 	settingAlgorithm.material_select();
+});
+modalSave.click(function() {
+	if (!modalSave.hasClass('disabled')) {
+		modalSave.addClass('disabled');
+		modalSaveProgress.addClass('active');
+		var input = bookmarkURL.val();
+		if (!input.match(/https?:\/\//)) {
+			input = 'http://' + input;
+		}
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET',input);
+		xhr.onerror = function(e) {console.log(e)};
+		xhr.onload = function() {
+			var worker = new Worker(chrome.runtime.getURL('crx/worker.js'));
+			var type = 's'; //allows for other types
+			var title = xhr.response.match(/<title>(.+)<\/title>/);
+			worker.postMessage(JSON.stringify([xhr.response.split('<body')[1].split('</body')[0].replace(/<[^>]*>/g, '').match(/\w+/g).join(' '),title ? title[1] : input,1.1]));
+			worker.onmessage = function(event) {
+				console.log(event.data);
+				var bms = chrome.storage.sync.get('pages',function(val) {
+					var pages = [];
+					if (val.pages) {
+						pages = val.pages;
+					}
+					console.log(pages);
+					var loc = input.split('://')[1].split('#')[0];
+					if (pages.indexOf(loc) < 0) {
+						pages.push(loc);
+						console.log(chrome.storage.sync.set({'pages': pages}));
+						var a = {},
+							arr = JSON.parse(event.data),
+							dom = location.origin.split('://')[1].split('.'),
+							d = new Date();
+						arr.push(dom[dom.length-2]+':30.0');
+						a[loc] = [arr,title ? title[1] : input ,type,(d.getMonth()+1)+'/'+(d.getDay()+1)+'/'+(d.getYear()-100)];
+						chrome.storage.sync.set(a);
+						toast('Page saved.', 1000);
+					} else {
+						toast('Already saved.', 1000);
+					}
+				});
+			};
+		};
+		xhr.send();
+		addCard(input, undefined, input);
+		bookmarkURL.val('');
+		modalSaveContainer.closeModal();
+	}
 });
 //datePicker[0].oninput = sortyByDate(datePicker.val());
 if (localStorage.getItem('run-once') === null) {
-	importModal.openModal();
+	modalImport.openModal({complete: resetImportModal});
 	localStorage.setItem('run-once', true);
 }

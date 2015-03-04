@@ -18,7 +18,8 @@
       options = $.extend(defaults, options);
 
       if (options.dismissible) {
-        $("#lean-overlay").click(function() {
+	    var leanOverlay = $("#lean-overlay");
+        leanOverlay.click(function() {
           $(modal).closeModal(options);
         });
         // Return on ESC
@@ -35,7 +36,7 @@
         $(modal).closeModal(options);
       });
 
-      $("#lean-overlay").css({ display : "block", opacity : 0 });
+      leanOverlay.css({ display : "block", opacity : 0 });
 
       $(modal).css({
         display : "block",
@@ -43,7 +44,7 @@
         opacity: 0
       });
 
-      $("#lean-overlay").velocity({opacity: options.opacity}, {duration: options.in_duration, queue: false, ease: "easeOutCubic"});
+      leanOverlay.velocity({opacity: options.opacity}, {duration: options.in_duration, queue: false, ease: "easeOutCubic"});
 
       $(modal).velocity({top: "10%", opacity: 1}, {
         duration: options.in_duration,

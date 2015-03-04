@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,500,700);
+@import url(http://fonts.googleapis.com/css?family=Roboto:200,300,400,500,700);
 .materialize-red.lighten-5 {
   background-color: #fdeaeb !important; }
 
@@ -5134,26 +5134,6 @@ nav {
 
   .navbar-fixed {
     height: 64px; } }
-@font-face {
-  font-family: "Roboto";
-  src: url("../font/roboto/Roboto-Thin.ttf");
-  font-weight: 200; }
-@font-face {
-  font-family: "Roboto";
-  src: url("../font/roboto/Roboto-Light.ttf");
-  font-weight: 300; }
-@font-face {
-  font-family: "Roboto";
-  src: url("../font/roboto/Roboto-Regular.ttf");
-  font-weight: 400; }
-@font-face {
-  font-family: "Roboto";
-  src: url("../font/roboto/Roboto-Medium.ttf");
-  font-weight: 500; }
-@font-face {
-  font-family: "Roboto";
-  src: url("../font/roboto/Roboto-Bold.ttf");
-  font-weight: 700; }
 a {
   text-decoration: none; }
 
